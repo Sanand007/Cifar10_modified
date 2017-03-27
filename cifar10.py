@@ -1,10 +1,36 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 23 20:03:23 2017
+# Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ==============================================================================
 
-@author: sanan
-"""
+"""Builds the CIFAR-10 network.
 
+Summary of available functions:
+
+ # Compute input images and labels for training. If you would like to run
+ # evaluations, use inputs() instead.
+ inputs, labels = distorted_inputs()
+
+ # Compute inference on the model inputs to make a prediction.
+ predictions = inference(inputs)
+
+ # Compute the total loss of the prediction with respect to the labels.
+ loss = loss(predictions, labels)
+
+ # Create a graph to run one step of training with respect to the loss.
+ train_op = train(loss, global_step)
+"""
+# pylint: disable=missing-docstring
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -47,7 +73,7 @@ INITIAL_LEARNING_RATE = 0.1       # Initial learning rate.
 # names of the summaries when visualizing a model.
 TOWER_NAME = 'tower'
 
-DATA_URL = 'http://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz'
+DATA_URL = 'http://ufldl.stanford.edu/housenumbers/train.tar.gz'
 
 
 def _activation_summary(x):
@@ -125,7 +151,7 @@ def distorted_inputs():
   """
   if not FLAGS.data_dir:
     raise ValueError('Please supply a data_dir')
-  data_dir = os.path.join(FLAGS.data_dir, 'cifar-10-batches-bin')
+  data_dir = os.path.join(FLAGS.data_dir, 'train')
   images, labels = cifar10_input.distorted_inputs(data_dir=data_dir,
                                                   batch_size=FLAGS.batch_size)
   if FLAGS.use_fp16:
@@ -149,7 +175,7 @@ def inputs(eval_data):
   """
   if not FLAGS.data_dir:
     raise ValueError('Please supply a data_dir')
-  data_dir = os.path.join(FLAGS.data_dir, 'cifar-10-batches-bin')
+  data_dir = os.path.join(FLAGS.data_dir, 'train')
   images, labels = cifar10_input.inputs(eval_data=eval_data,
                                         data_dir=data_dir,
                                         batch_size=FLAGS.batch_size)
@@ -368,6 +394,6 @@ def maybe_download_and_extract():
     print()
     statinfo = os.stat(filepath)
     print('Successfully downloaded', filename, statinfo.st_size, 'bytes.')
-  extracted_dir_path = os.path.join(dest_directory, 'cifar-10-batches-bin')
+  extracted_dir_path = os.path.join(dest_directory, 'train')
   if not os.path.exists(extracted_dir_path):
     tarfile.open(filepath, 'r:gz').extractall(dest_directory)
